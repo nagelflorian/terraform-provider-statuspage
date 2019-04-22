@@ -1,0 +1,6 @@
+build
+terraform-provider-statuspage
+*.tf
+*.tfstate
+*.tfstate.backup
+.terraform
