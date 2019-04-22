@@ -16,7 +16,9 @@ func Provider() terraform.ResourceProvider {
 				Description: "The Statuspage API Key",
 			},
 		},
-		ResourcesMap:  map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"statuspage_page": resourcePage(),
+		},
 		ConfigureFunc: providerConfigure,
 	}
 }
