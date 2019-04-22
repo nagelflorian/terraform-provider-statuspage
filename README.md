@@ -1,4 +1,4 @@
-# Terraform Provider for Statuspage
+# Terraform Provider for Statuspage [![CircleCI](https://circleci.com/gh/nagelflorian/terraform-provider-statuspage/tree/master.svg?style=svg&circle-token=fbdf808c350f34f19372149625eb45573d0f42b6)](https://circleci.com/gh/nagelflorian/terraform-provider-statuspage/tree/master)
 
 ## Requirements
 
