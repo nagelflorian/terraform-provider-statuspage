@@ -35,12 +35,17 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags="-s -w" -a -
 ## Docker Development
 
 ```bash
-# Build and test using Docker (matches CI)
+# Build and test using Docker
 docker build .
 
-# Run specific build stage
+# Run tests only
+docker build --target test .
+
+# Build binaries only (skip tests)
 docker build --target build .
 ```
+
+**Note:** The Docker build includes testing but not linting, as golint has compatibility issues with Go 1.12 in Alpine. Linting is handled by GitHub Actions using the native environment.
 
 ## Testing Provider Locally
 

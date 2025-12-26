@@ -1,11 +1,9 @@
 FROM golang:1.12-alpine AS base
 WORKDIR /src
-RUN apk add --no-cache git
+RUN apk add --no-cache git build-base
 
-FROM base AS lint-and-test
-RUN go install golang.org/x/lint/golint@latest
+FROM base AS test
 COPY ./ ./
-RUN golint ./...
 RUN go test -mod vendor -v 2>&1 ./statuspage/...
 
 FROM base AS build
