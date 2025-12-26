@@ -25,27 +25,27 @@ gofmt -w .
 
 ```bash
 # Local build
-go build -mod=vendor -o terraform-provider-statuspage
+go build -mod=vendor -buildvcs=false -o terraform-provider-statuspage
 
 # Cross-platform builds (as done in CI)
-CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -mod=vendor -ldflags="-s -w" -a -o build/terraform-provider-statuspage-darwin-amd64
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags="-s -w" -a -o build/terraform-provider-statuspage-linux-amd64
+CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -mod=vendor -ldflags="-s -w" -buildvcs=false -a -o build/terraform-provider-statuspage-darwin-amd64
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags="-s -w" -buildvcs=false -a -o build/terraform-provider-statuspage-linux-amd64
 ```
 
 ## Docker Development
 
 ```bash
-# Build and test using Docker
+# Build, lint, test, and create binaries using Docker
 docker build .
 
-# Run tests only
-docker build --target test .
+# Run lint and tests only
+docker build --target lint-and-test .
 
-# Build binaries only (skip tests)
+# Build binaries only (skip lint and tests)
 docker build --target build .
 ```
 
-**Note:** The Docker build includes testing but not linting, as golint has compatibility issues with Go 1.12 in Alpine. Linting is handled by GitHub Actions using the native environment.
+**Note:** Updated to Go 1.19 for compatibility with modern tooling like golint. The `-buildvcs=false` flag is required to disable VCS stamping in Docker builds. Docker now includes full lint and test stages.
 
 ## Testing Provider Locally
 
