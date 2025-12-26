@@ -81,7 +81,7 @@ jobs:
         sha256sum -b terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }} > terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
     
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }}
         path: |
