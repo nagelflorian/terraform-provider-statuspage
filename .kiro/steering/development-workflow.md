@@ -58,6 +58,8 @@ docker build --target build .
 
 ## CI/CD Notes
 
-- CircleCI runs Docker build which includes lint, test, and multi-arch builds
-- All binaries get SHA256 checksums generated
+- GitHub Actions workflow runs lint, test, and multi-arch builds
+- All binaries get SHA256 checksums generated and uploaded as artifacts
 - Uses vendored dependencies for reproducible builds
+- Workflow triggers on pushes to main/master branches and pull requests
+- Docker build is also available as an alternative build method

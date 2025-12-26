@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.12'
+    
+    - name: Install golint
+      run: go get -u golang.org/x/lint/golint
+    
+    - name: Run golint
+      run: golint ./...
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.12'
+    
+    - name: Download dependencies
+      run: go mod download
+    
+    - name: Run tests
+      run: go test -mod vendor -v ./statuspage/...
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    strategy:
+      matrix:
+        include:
+          - goos: darwin
+            goarch: amd64
+          - goos: linux
+            goarch: 386
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.12'
+    
+    - name: Create build directory
+      run: mkdir -p build
+    
+    - name: Build binary
+      env:
+        CGO_ENABLED: 0
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+      run: |
+        go build -mod=vendor -ldflags="-s -w" -a -o build/terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }}
+    
+    - name: Generate checksum
+      run: |
+        cd build
+        sha256sum -b terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }} > terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }}
+        path: |
+          build/terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }}
+          build/terraform-provider-statuspage-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
+
+  docker-build:
+    name: Docker Build (Alternative)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Docker image
+      run: docker build .
